@@ -1,0 +1,14 @@
+#ifndef DEFINES_H_INCLUDED
+#define DEFINES_H_INCLUDED
+
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 450
+#define ROWS 30
+#define COLS 60
+#define CUBE_SIZE 1.0f
+#define Y_HEIGHT 0.0f
+#define BLACK_SPACE .012f
+#define ALMOST_HALF .46f
+
+
+#endif // DEFINES_H_INCLUDED
