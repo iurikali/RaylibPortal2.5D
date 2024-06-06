@@ -30,9 +30,9 @@ void CameraMoviment(Camera3D *cam, float x_value, float z_value)
 
 void CameraFollowPlayer(Camera3D *cam, Player player)
 {
-    cam->target.x = player.position.x;
-    cam->target.z = player.position.z;
+    cam->target.x = player.entity.position.x;
+    cam->target.z = player.entity.position.z;
 
-    cam->position.x = player.position.x;
-    cam->position.z = player.position.z + 0.1f;
+    cam->position.x = player.entity.position.x;
+    cam->position.z = player.entity.position.z + 10.1f;
 }

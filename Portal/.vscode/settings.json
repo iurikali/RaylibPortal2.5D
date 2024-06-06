@@ -4,6 +4,13 @@
         "player.h": "c",
         "string.h": "c",
         "defines.h": "c",
-        "mathe.h": "c"
+        "mathe.h": "c",
+        "math.h": "c",
+        "stdlib.h": "c",
+        "lever.h": "c",
+        "raymath.h": "c",
+        "stdio.h": "c",
+        "structs.h": "c",
+        "transition.h": "c"
     }
 }

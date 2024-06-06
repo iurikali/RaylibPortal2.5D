@@ -10,6 +10,6 @@ void PlayerUpdate(Player *player);
 
 void CheckingCollisionWall(Player *player, char map[ROWS][COLS]);
 
-void RenderPlayer(Player player);
+void RenderPlayer(Player *player);
 
 #endif // PLAYER_H_INCLUDED
