@@ -3,6 +3,7 @@
 #include "defines.h"
 #include "mathe.h"
 #include "models.h"
+#include <math.h>
 #include <stdio.h>
 
 Player NewPlayer()
@@ -108,4 +109,11 @@ void CheckingCollisionWall(Player *player, char map[ROWS][COLS])
                                           (Vector3){player->entity.position.x + player->entity.size * .5f,
                                                     player->entity.position.y + player->entity.size * .5f,
                                                     player->entity.position.z + player->entity.size * .5f}};
+}
+
+
+void RenderAim(Models *aim_models, float theta, Player player)
+{
+    Vector3 position = {player.entity.position.x + (cosf(theta) * AIM_RADIUS), Y_HEIGHT, player.entity.position.z + (sinf(theta) * AIM_RADIUS)};
+    DrawModels(position, aim_models);
 }

@@ -12,4 +12,6 @@ void CheckingCollisionWall(Player *player, char map[ROWS][COLS]);
 
 void RenderPlayer(Player *player);
 
+void RenderAim(Models *aim_models, float theta, Player player);
+
 #endif // PLAYER_H_INCLUDED

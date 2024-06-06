@@ -14,7 +14,13 @@
 #define ENEMY_HITBOX_NUMBER .4f
 #define SIZE_CUBE_PORTAL .2f
 #define RED_PORTAL (Color) {255, 102, 102, 255}
-//#define FLOOR_COLOR (Color) {193, 150, 139, 255}
 #define FLOOR_COLOR (Color) {56, 43, 40, 255}
+#define AIM_RADIUS 1.0f
+#define MAX_IMG 3
+#define MIN_IMG 1
+#define SIZE_MENU_TEXT 60
+#define BLACK_ALPHA (Color) {0, 0, 0, 100}
+#define GRAY_ALPHA (Color){130, 130, 130, 100}
+#define PURPLE_ALPHA (Color){200, 122, 255, 100}
 
 #endif // DEFINES_H_INCLUDED
