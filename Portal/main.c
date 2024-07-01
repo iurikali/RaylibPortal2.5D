@@ -20,7 +20,7 @@ int main()
 
     int number_map = 1;
 
-    LoadMap(number_map, &map);
+    LoadMap(&number_map, &map);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - basic window");
 
@@ -67,31 +67,28 @@ int main()
     int reset = 0;
     int dead = 0;
     int menu = 1;
-    int game_over = 0;
+    int won = 0;
+    //int game_over = 0;
     int first_time = 1;
-    int there_is_file = 0;
     int there_is_map = ThereIsFile("maps/map1.txt");
     int img = 0;
-    int load = 0;
-    int load_map_menu = 0;
-    int saved = 0;
+    int close_game = 0;
 
-    Rectangle botton_play = { SCREEN_WIDTH / 2 - 150, 250, 298, 50 };//principal
     Rectangle botton_load = { SCREEN_WIDTH/ 2 - 150, 320, 298, 50 };//principal
     Rectangle botton_exit_inicial = { SCREEN_WIDTH/ 2 - 150, 390, 298, 50 };//principal
-    Rectangle pause_continue = { SCREEN_WIDTH/ 2 - 150, 180, 298, 50};//pause
     Rectangle load_pause = { SCREEN_WIDTH/ 2 - 150, 250, 298, 50 };
-    Rectangle save_game = { SCREEN_WIDTH/ 2 - 150, 320, 298, 50 };
-    Rectangle return_menu_inic = { SCREEN_WIDTH/ 2 - 150, 460, 298, 50 };//mesmos dados do botao_sair
-    Rectangle botton_exit_pause = {SCREEN_WIDTH/ 2 - 150, 390, 298, 50 };//pause
+    Rectangle save_game = { SCREEN_WIDTH/ 2 - 150, 320, 298, 50 };;
 
     Font fp = LoadFont("resources/fonts/VCR_OSD_MONO_1.001.ttf");
+    Font fo = LoadFont("resources/fonts/upheavtt.ttf");
 
     //Carregando as imagens de fundo
     Texture2D backgrounds[3] = {0};
     backgrounds[0] = LoadTexture("resources/images/imgmenu01.png");
     backgrounds[1] = LoadTexture("resources/images/imgmenu02.png");
     backgrounds[2] = LoadTexture("resources/images/imgmenu03.png");
+    Texture2D background_win = LoadTexture("resources/images/win_fundo.png");
+    Texture2D background_over = LoadTexture("resources/images/img_gameover.png");
 
     //Vars dos inimigos
     Enemy enemys[MAX_ENEMYS] = {0};
@@ -110,7 +107,7 @@ int main()
     levers_model_array[0] = LoadModel("resources/models/others/lever_red.vox");
     levers_model_array[1] = LoadModel("resources/models/others/lever_green.vox");
     int fixed_lever = 0;
-    //DisableCursor();
+    
 
     //Vars da saida
     Model exit_model_array[2] = {0};
@@ -142,11 +139,41 @@ int main()
 
     qtd_levers = qtd_levers_max;
 
-    SetExitKey(KEY_F12);
+    SetExitKey(KEY_F11);
+    //DisableCursor();
 
-    while (!WindowShouldClose())
+    //Musicas e sfx
+    InitAudioDevice();
+    Sound sfx_active = LoadSound("resources/sfx/active.mp3");
+    Sound sfx_damage = LoadSound("resources/sfx/damage.wav");
+    Sound sfx_exit = LoadSound("resources/sfx/exit.wav");
+
+    Music music_main = LoadMusicStream("resources/musics/main_theme.wav");
+    Music music_win = LoadMusicStream("resources/musics/win_song.wav");
+    Music music_over = LoadMusicStream("resources/musics/over_song.wav");
+    SetMusicVolume(music_main, .1);
+    SetSoundVolume(sfx_active, .1);
+    SetSoundVolume(sfx_damage, .1);
+    SetSoundVolume(sfx_exit, .1);
+
+    PlayMusicStream(music_main);
+
+    //UI
+    Texture2D texture_life = LoadTexture("resources/sprites/life.png");
+    Texture2D texture_lever = LoadTexture("resources/sprites/lever.png");
+
+    while (!WindowShouldClose() && !close_game)
     {   
+        UpdateMusicStream(music_main);
+
+        if (tran.activated)
+            TransitionUpdate(&tran);
         //Parando o jogo se estivermos no menu ou pausado ou morto
+        if (IsKeyPressed(KEY_ESCAPE) && !menu && !dead && !tran.activated)
+        {
+            pause = !pause;
+        }
+
         if (!menu && !pause && !dead)
         {
             //Reiniciando o jogo
@@ -158,20 +185,13 @@ int main()
             
             if (!tran.activated)
             {
-                if (IsKeyPressed(KEY_ESCAPE) && !menu && !dead)
-                {
-                    there_is_file = ThereIsFile("dados_salvos.bin");
-                    saved = 0;
-                    pause = !pause;
-                }
-
                 //Atualizando o player
                 PlayerUpdate(&player);
 
                 //Atualizando os valores da camera  
                 //CameraMoviment(&cam, player.velh, player.velv);
                 
-                //UpdateCamera(&cam, CAMERA_FREE);
+                //UpdateCamera(&cam, CAMERA_THIRD_PERSON);
 
                 //DisableCursor();
 
@@ -180,16 +200,14 @@ int main()
                 PortalUpdate(&portals[0], &player, &turn, &lanched, map, &used, &theta, &cam);
 
                 //Alavancas
-                LeverUpdate(levers, &player, &map, &qtd_levers, qtd_levers_max);
+                LeverUpdate(levers, &player, &map, &qtd_levers, qtd_levers_max, &sfx_active);
             }
             else
             {
-                TransitionUpdate(&tran);
                 //Resetando as variaveis para trocar de fase
                 if (tran.change_level)
                 {
                     exit_opened = 0;
-                    qtd_levers = 0;
                     qtd_levers_max = 0;
                     qtd_enemys_max = 0;
                     portals[0].entity.position = (Vector3) {0.0f, 0.0f, 0.0f};
@@ -203,10 +221,21 @@ int main()
 
                     //Indo pro proximo mapa
                     number_map++;
-                    LoadMap(number_map, &map);
+                    LoadMap(&number_map, &map);
                     rendered = 0;
-                    FirstReadMap(map, &rendered, enemys, &qtd_enemys_max, &player, levers, &qtd_levers_max, &enemys_model_array[0], &fixed_enemy,
-                                &levers_model_array[0], &fixed_lever, &max_values[0], &min_values[0]);
+
+                    if (number_map < 100)
+                    {
+                        FirstReadMap(map, &rendered, enemys, &qtd_enemys_max, &player, levers, &qtd_levers_max, &enemys_model_array[0], &fixed_enemy,
+                                    &levers_model_array[0], &fixed_lever, &max_values[0], &min_values[0]);
+                    }
+                    //Falando que ganhamos
+                    else
+                    {
+                        dead = 1;
+                        won = 1;
+                    }
+                    qtd_levers = qtd_levers_max;
                     tran.change_level = 0;
                 }
             }
@@ -218,7 +247,7 @@ int main()
             //ClearBackground((Color){72, 59, 58, 255});
             ClearBackground(BLACK);
 
-            if (!menu && !dead)
+            if (!menu)
             {
                 //Iniciando a area 3D
                 BeginMode3D(cam);
@@ -228,13 +257,13 @@ int main()
                     RenderMap(map, &wall_models, &spike_models, &exit_models);
 
                     //Renderizando as alavancas
-                    exit_opened = ExitUpdate(levers, qtd_levers_max);
+                    exit_opened = ExitUpdate(levers, qtd_levers_max, &sfx_exit);
                     exit_models.frame_index = exit_opened;
                     if (exit_opened)
                         leaving(&player, &tran, map);
                     
                     //Renderizando e fazendo a logica dos inimigos
-                    RenderEnemys(enemys, map, &player, &rendered, qtd_enemys_max, pause, &dead, &reset);
+                    RenderEnemys(enemys, map, &player, &rendered, qtd_enemys_max, pause, &dead, &reset, &sfx_damage);
 
                     //Desenhando os portais
                     RenderPortal(&portals[0]);
@@ -265,13 +294,54 @@ int main()
                     DrawFloor(&max_values[0], &min_values[0]);
 
                 EndMode3D();
+
+                //Desenhando a barra lá em cima
+                DrawRectangle(0, 0, SCREEN_WIDTH, 40, (Color){0, 0, 0, 150});
+
+                // Desenhando a vida
+                for (int i = 0; i < player.life; i++)
+                {
+                    DrawTextureEx(texture_life, (Vector2){0 + (i * (20 * SCALE_UI * .5)), 0}, 0, SCALE_UI, WHITE);
+                }
+
+                //Desenhando quantas alavancas tem
+                //sprite_desenha_pro(&((Sprite){alavanca_textura, 2, 0, {0, 0, 20, 20}}), (LARGURA - 50 * vida_escala) + 10, 20, WHITE, pause);
+                DrawTextureEx(texture_lever, (Vector2){(SCREEN_WIDTH - 50 * SCALE_UI) + 10, 0}, 0, SCALE_UI, WHITE);
+
+                //Desenhando a quatidade alavancas
+                if (qtd_levers < 10)
+                    DrawText(TextFormat("%i", qtd_levers), SCREEN_WIDTH - 20 * SCALE_UI, -2.5, 50, WHITE);
+                else
+                    DrawText(TextFormat("%i", qtd_levers), SCREEN_WIDTH - 25 * SCALE_UI, -2.5, 50, WHITE);
+
+                // Desenhando a quatidade alavancas
+                if (qtd_levers < 10)
+                    DrawText(TextFormat("%i", qtd_levers), SCREEN_WIDTH - 20 * SCALE_UI, -2.5, 50, WHITE);
+                else
+                    DrawText(TextFormat("%i", qtd_levers), SCREEN_WIDTH - 25 * SCALE_UI, -2.5, 50, WHITE);
+
+                //Desenhando o numero da fase
+                DrawText(TextFormat("%i", number_map), SCREEN_WIDTH / 2, -2.5, 50, WHITE);
             }
             //Estamos no menu
             if (menu)
             {
-                    //Resetando tudo
+                InicialMenu(botton_load, botton_exit_inicial, &menu, fp, backgrounds, &first_time, &img, &map, &there_is_map, &close_game);
+            }
+            else if (pause)
+            {
+                reset = 0;
+                MenuPause(load_pause, save_game, &pause, fp, &close_game);
+            }
+            else if (dead)
+            {
+                tran.change_level = 0;
+                tran.activated = 0;
+                EndGame(botton_load, &menu, fp, &won, &dead, fo, background_over, background_win, &music_main, won ? &music_win : &music_over);
+
+                if (menu)
+                {
                     exit_opened = 0;
-                    qtd_levers = 0;
                     qtd_levers_max = 0;
                     qtd_enemys_max = 0;
                     portals[0].entity.position = (Vector3) {0.0f, 0.0f, 0.0f};
@@ -282,52 +352,30 @@ int main()
                     max_values[1] = 0;
                     min_values[0] = 100;
                     min_values[1] = 100;
-                    rendered = 0;
-                    player.life = 3;
-                    
-                    InicialMenu(botton_play, botton_load, botton_exit_inicial, &menu, fp, backgrounds, &first_time, &img, &number_map, &map, &load,
-                                 &player, levers, enemys, &exit_opened, &turn, portals, &there_is_file, &there_is_map, &load_map_menu);
+                    player.life = PLAYER_MAX_LIFE;
 
-                    //Saindo do menu
-                    if (load_map_menu)
-                    {
-                        FirstReadMap(map, &rendered, enemys, &qtd_enemys_max, &player, levers, &qtd_levers_max, &enemys_model_array[0], &fixed_enemy,
-                                    &levers_model_array[0], &fixed_lever, &max_values[0], &min_values[0]);
-                        menu = 0;
-                        rendered = 1;
-                        load_map_menu = 0;
-                    }
-            }
-            else if (pause)
-            {
-                reset = 0;
-                MenuPause(pause_continue, load_pause, save_game, botton_exit_inicial, return_menu_inic, &pause, fp, &menu, &load,
-                           &player, enemys, levers, &number_map, &exit_opened, &map, &rendered, &qtd_levers_max, &qtd_enemys_max, &turn, portals, &saved, &there_is_file);
-                //printf("D");
-
-                if (load)
-                {
-                    LoadMap(number_map, &map);
+                    //Indo pro proximo mapa
+                    number_map = 1;
+                    LoadMap(&number_map, &map);
                     rendered = 0;
-                    qtd_levers_max = 0;
-                    qtd_enemys_max = 0;
+
                     FirstReadMap(map, &rendered, enemys, &qtd_enemys_max, &player, levers, &qtd_levers_max, &enemys_model_array[0], &fixed_enemy,
                                 &levers_model_array[0], &fixed_lever, &max_values[0], &min_values[0]);
-                    
-                    //qtd_levers = 0;
-
-                    LoadGame(&map, &player, levers, enemys, &exit_opened, &number_map, &turn, portals);
-                    pause = 0;
-                    load = 0;
+                    tran.change_level = 0;
+                    qtd_levers = qtd_levers_max;
                 }
             }
-            DrawFPS(0, 0);
+            //DrawFPS(0, 0);
 
             //Desenhando a transicao
             if (tran.activated)
                 DrawTransition(tran);
 
         EndDrawing();
+        //printf("\n Dead: %d", dead);
+        printf("\nPosition: %f : %f : %f", cam.position.x, cam.position.y, cam.position.z);
+        printf("\ntarget: %f : %f : %f", cam.target.x, cam.target.y, cam.target.z);
+        //printf("\nup: %f : %f : %f", cam.up.x, cam.up.y, cam.up.z);
     }
 
     UnloadModel(player_model_array[0]);
@@ -349,8 +397,22 @@ int main()
     UnloadTexture(backgrounds[0]);
     UnloadTexture(backgrounds[1]);
     UnloadTexture(backgrounds[2]);
+    UnloadTexture(background_win);
+    UnloadTexture(background_over);
+    UnloadTexture(texture_life);
+    UnloadTexture(texture_lever);
 
     UnloadFont(fp);
+    UnloadFont(fo);
+
+    UnloadSound(sfx_active);
+    UnloadSound(sfx_damage);
+    UnloadSound(sfx_exit);
+
+    UnloadMusicStream(music_main);
+    UnloadMusicStream(music_over);
+    UnloadMusicStream(music_win);
+
     CloseWindow();
 
     return 0;

@@ -38,7 +38,7 @@ int ShouldMove(Entity entity, char map[ROWS][COLS], int holes)
     return go;
 }
 
-void MoveIni(Enemy *enemy, char map[ROWS][COLS], Player *player, int *rendered, int pause, int *dead, int *reset)
+void MoveIni(Enemy *enemy, char map[ROWS][COLS], Player *player, int *rendered, int pause, int *dead, int *reset, Sound *sfx_damage)
 {
     if (!pause)
     {
@@ -110,9 +110,10 @@ void MoveIni(Enemy *enemy, char map[ROWS][COLS], Player *player, int *rendered, 
         {
             player->life -= 1;
             *reset = 1;
+            PlaySound(*sfx_damage);
             if (player->life < 0)
                 *dead = 1;
-            printf("\nColidi");
+            
         }
     }
 
@@ -127,11 +128,11 @@ void MoveIni(Enemy *enemy, char map[ROWS][COLS], Player *player, int *rendered, 
     }
 }
 
-void RenderEnemys(Enemy enemys[MAX_ENEMYS], char map[ROWS][COLS], Player *player, int *rendered, int qtd_enemys_max, int pause, int *dead, int *reset)
+void RenderEnemys(Enemy enemys[MAX_ENEMYS], char map[ROWS][COLS], Player *player, int *rendered, int qtd_enemys_max, int pause, int *dead, int *reset, Sound *sfx_damage)
 {
     int i = 0;
     for (i = 0; i < qtd_enemys_max; i++)
     {        
-        MoveIni(&enemys[i], map, player, rendered, pause, dead, reset);
+        MoveIni(&enemys[i], map, player, rendered, pause, dead, reset, sfx_damage);
     }
 }

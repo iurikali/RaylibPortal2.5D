@@ -6,18 +6,11 @@
 
 int ThereIsFile(char dir[]);
 
-int LoadGame(char (*map)[ROWS][COLS], Player *player, Lever levers[MAX_LEVERS], Enemy enemys[MAX_ENEMYS], int *exit_opened, int *level, int *turn,
-                 Portal portals[2]);
+void InicialMenu(Rectangle b, Rectangle c, int *menu, Font f1, Texture2D background[3], int *first_time, int *img,
+                  char (*map)[ROWS][COLS], int *there_is_map, int *close_game);
 
-int SaveGame(Player player, Enemy enemys[MAX_ENEMYS], Lever levers[MAX_LEVERS], int level, int exit_opened, int turn, Portal portals[2]);
+void MenuPause(Rectangle b, Rectangle c, int *pause, Font fp, int *close_game);
 
-void InicialMenu(Rectangle a, Rectangle b, Rectangle c, int *menu, Font f1, Texture2D background[3], int *first_time, int *img, int *number_map,
-                  char (*map)[ROWS][COLS], int *load, Player *player, Lever levers[MAX_LEVERS], Enemy enemys[MAX_ENEMYS], int *exit_opened, int *turn,
-                  Portal portals[2], int *there_is_file, int *there_is_map, int *load_map_menu);
-
-void MenuPause(Rectangle a, Rectangle b, Rectangle c, Rectangle d, Rectangle e, int *pause, Font fp, int *menu, int *load,
-                Player *player, Enemy enemys[MAX_ENEMYS], Lever levers[MAX_LEVERS], int *level, int *exit_opened, char (*map)[ROWS][COLS], int *rendered,
-                int *qtd_levers, int *qtd_enemys, int *turn, Portal portals[2], int *saved, int *there_is_file);
-
+void EndGame(Rectangle b, int *menu, Font f1, int *won, int *dead, Font f2, Texture2D background_over, Texture2D background_win, Music *music, Music *music_win);
 
 #endif // MENU_H_INCLUDED

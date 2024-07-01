@@ -1,8 +1,8 @@
 #ifndef DEFINES_H_INCLUDED
 #define DEFINES_H_INCLUDED
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 450
+#define SCREEN_WIDTH 1200 //800
+#define SCREEN_HEIGHT 600 //450
 #define ROWS 30
 #define COLS 60
 #define CUBE_SIZE 1.0f
@@ -22,5 +22,7 @@
 #define BLACK_ALPHA (Color) {0, 0, 0, 100}
 #define GRAY_ALPHA (Color){130, 130, 130, 100}
 #define PURPLE_ALPHA (Color){200, 122, 255, 100}
+#define PLAYER_MAX_LIFE 3
+#define SCALE_UI 2
 
 #endif // DEFINES_H_INCLUDED

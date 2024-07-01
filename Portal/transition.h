@@ -8,7 +8,7 @@
 Transition NewTransition(int type, Color color);
 
 //Funcao de logica
-void TransitionUpdate(Transition *tran/*, int *exit_opened, Portal *portals, char (*mapa)[LINHAS][COLUNAS], int *renderizado, int *num_mapa, int *qtd_alavancas, int *qtd_inimigos_max*/);
+void TransitionUpdate(Transition *tran);
 
 void DrawTransition(Transition tran);
 

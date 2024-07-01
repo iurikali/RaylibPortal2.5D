@@ -6,7 +6,7 @@
 
 void RenderMap(char map[ROWS][COLS], Models *wall_models, Models *spike_models, Models *exit_models);
 
-void LoadMap(int number, char (*map)[ROWS][COLS]);
+void LoadMap(int *number, char (*map)[ROWS][COLS]);
 
 void FirstReadMap(char map[ROWS][COLS], int *rendered, Enemy array_enemys[MAX_ENEMYS], int *qtd_enemys_max, Player *player, Lever levers[MAX_LEVERS], int *qtd_levers_max,
                   Model *enemy_model, int *fixed_enemy, Model *lever_model, int *fixed_lever, int *max_values, int *min_values);

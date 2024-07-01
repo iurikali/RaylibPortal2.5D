@@ -19,7 +19,7 @@ Transition NewTransition(int type, Color color)
 }
 
 //Funcao de logica
-void TransitionUpdate(Transition *tran/*, int *exit_opened, Portal *portals, char (*mapa)[LINHAS][COLUNAS], int *renderizado, int *num_mapa, int *qtd_alavancas, int *qtd_inimigos_max*/)
+void TransitionUpdate(Transition *tran)
 {
     //Se ainda nao trocamos de fase
     if (!tran->changed)
@@ -30,7 +30,7 @@ void TransitionUpdate(Transition *tran/*, int *exit_opened, Portal *portals, cha
             //Aumentando a alpha
             tran->color.a += tran->speed;
             //transicao->cor.a = 256;
-            printf("\n%d", tran->color.a);
+            //printf("\n%d", tran->color.a);
         }
         else
         {
@@ -79,6 +79,7 @@ void TransitionUpdate(Transition *tran/*, int *exit_opened, Portal *portals, cha
     //Trocamos de fase
     else
     {
+        //printf("\noi");
         //Vamos clarear
         if (tran->color.a > 0 + tran->speed)
         {

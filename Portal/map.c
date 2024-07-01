@@ -191,11 +191,11 @@ void ResetHit(Player *player, Portal portals[2], Enemy enemys[MAX_ENEMYS], int q
 }
 
 //num_mapa eh o numero do mapa que tu quer carregar/salvar
-void LoadMap(int number, char (*map)[ROWS][COLS])
+void LoadMap(int *number, char (*map)[ROWS][COLS])
 {
     //Pegando o nome do mapa que queremos abrir
     char number_string[3] = {0};
-    sprintf(number_string, "%d", number);
+    sprintf(number_string, "%d", *number);
 
     char map_dir[16] = "maps/map";
     char type[5] = ".txt";
@@ -212,7 +212,11 @@ void LoadMap(int number, char (*map)[ROWS][COLS])
 
     if (file == NULL)
     {
-        printf("\nNao foi possivel abrir o arquivo :(");
+        if (*number != 1)
+        {
+            *number = 101;
+        }
+        //printf("\nNao foi possivel abrir o arquivo :(");
     }
     else
     {

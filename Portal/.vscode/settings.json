@@ -12,6 +12,7 @@
         "stdio.h": "c",
         "structs.h": "c",
         "transition.h": "c",
-        "map.h": "c"
+        "map.h": "c",
+        "models.h": "c"
     }
 }

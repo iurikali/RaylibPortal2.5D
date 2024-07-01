@@ -4,7 +4,7 @@
 #include "models.h"
 #include <stdio.h>
 
-void LeverUpdate(Lever levers[MAX_LEVERS], Player *player, char (*map)[ROWS][COLS], int *qtd_levers, int qtd_levers_max)
+void LeverUpdate(Lever levers[MAX_LEVERS], Player *player, char (*map)[ROWS][COLS], int *qtd_levers, int qtd_levers_max, Sound *sfx_active)
 {
     int i = 0;
     // Apertando para ativar a alavanca
@@ -23,7 +23,7 @@ void LeverUpdate(Lever levers[MAX_LEVERS], Player *player, char (*map)[ROWS][COL
                 //levers[i].sprite.frame_atual = 1;
                 (*qtd_levers)--;
                 //(*mapa)[player->entidade.y / TAMANHO][player->entidade.x / TAMANHO] = 'U';
-                //PlaySound(*fxAtivacao);
+                PlaySound(*sfx_active);
             }
 
             //printf("%d", alavancas[i].x);
@@ -31,7 +31,7 @@ void LeverUpdate(Lever levers[MAX_LEVERS], Player *player, char (*map)[ROWS][COL
     }
 }
 
-int ExitUpdate(Lever levers[MAX_LEVERS], int qtd_levers_max)
+int ExitUpdate(Lever levers[MAX_LEVERS], int qtd_levers_max, Sound *sfx_exit)
 {
     int i = 0, closed = 1;
     for (i = 0; i < qtd_levers_max; i++)
@@ -55,7 +55,7 @@ int ExitUpdate(Lever levers[MAX_LEVERS], int qtd_levers_max)
     }
     if(!closed)
     {
-        //PlaySound(*fxAbertura);
+        PlaySound(*sfx_exit);
     }
     return closed;
 }
